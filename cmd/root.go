@@ -17,8 +17,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -29,13 +30,13 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "f5ToTf",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Export Big-IP resources to Terraform code",
+	Long: `Exports Big-IP resources to corresponding Terraform code. This code
+uses the BigIp Terraform provider. The intention of this tool is to simplify the
+process of using Terraform's import command. Currently, Terraform import does
+not create a corresponding code for the state it imports. This tool fills that
+gap
+`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -58,10 +59,14 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.f5ToTf.yaml)")
+	rootCmd.PersistentFlags().StringP("username", "u", "", "User to access the Big-IP system as")
+	rootCmd.PersistentFlags().StringP("address", "a", "", "Url of the Big-IP instance")
 
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Is this wonky? Yes it is. See this GitHub comment as to why
+	// https://github.com/spf13/cobra/issues/206#issuecomment-471959800
+	pf := rootCmd.PersistentFlags()
+	cobra.MarkFlagRequired(pf, "username")
+	cobra.MarkFlagRequired(pf, "address")
 }
 
 // initConfig reads in config file and ENV variables if set.
