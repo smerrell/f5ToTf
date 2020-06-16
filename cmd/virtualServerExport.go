@@ -17,7 +17,9 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/f5devcentral/go-bigip"
 	"github.com/smerrell/f5ToTf/cliutil"
 	"github.com/spf13/cobra"
 )
@@ -31,6 +33,16 @@ var virtualServerExportCmd = &cobra.Command{
 		fmt.Println("virtualServerExport called")
 		passwd := cliutil.PromptForPassword()
 		fmt.Printf(passwd)
+		session, err := bigip.NewTokenSession("", "443", "", passwd, "tmos", nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		server, err := session.GetVirtualServer("")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("%v", server)
 	},
 }
 
