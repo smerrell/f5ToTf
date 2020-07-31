@@ -7,8 +7,11 @@ import (
 	"github.com/f5devcentral/go-bigip"
 )
 
-func Export(vs *bigip.VirtualServer) string {
-	vstemplate := `resource "bigip_ltm_virtual_server" "{{.Name}}" {
+func ExportVirtualServer(vs *bigip.VirtualServer) string {
+	funcMap := template.FuncMap{
+		"sanitize": SanitizeTerraformName,
+	}
+	vstemplate := `resource "bigip_ltm_virtual_server" "{{.Name | sanitize}}" {
 	name        = "{{.FullPath}}"
 	description = "{{.Description}}"
 }`
@@ -19,7 +22,7 @@ func Export(vs *bigip.VirtualServer) string {
 		return ""
 	}
 
-	tmpl, err := template.New("vs").Parse(vstemplate)
+	tmpl, err := template.New("vs").Funcs(funcMap).Parse(vstemplate)
 	if err != nil {
 		panic(err)
 	}

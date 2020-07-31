@@ -7,7 +7,7 @@ import (
 )
 
 func TestNilVirtualServerReturnsEmptyString(t *testing.T) {
-	vs := Export(nil)
+	vs := ExportVirtualServer(nil)
 	if len(vs) > 0 {
 		t.Errorf("\nExpected empty string: got\n'%v'", vs)
 	}
@@ -23,7 +23,7 @@ func TestVirtualServerExport(t *testing.T) {
 		FullPath:    "/Common/myvirtual_server",
 		Description: "This is a virtual server description",
 	}
-	vs := Export(server)
+	vs := ExportVirtualServer(server)
 	if vs != template {
 		t.Errorf("Expected: \n%v\nGot:\n%v", template, vs)
 	}
