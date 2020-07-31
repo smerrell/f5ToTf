@@ -9,11 +9,15 @@ import (
 
 func ExportVirtualServer(vs *bigip.VirtualServer) string {
 	funcMap := template.FuncMap{
-		"sanitize": SanitizeTerraformName,
+		"sanitize":  SanitizeTerraformName,
+		"ipaddress": IPAddress,
+		"ipport":    IPPort,
 	}
 	vstemplate := `resource "bigip_ltm_virtual_server" "{{.Name | sanitize}}" {
 	name        = "{{.FullPath}}"
 	description = "{{.Description}}"
+	destination = "{{.Destination | ipaddress}}"
+	port        = "{{.Destination | ipport}}"
 }`
 
 	var builder strings.Builder
